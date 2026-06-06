@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family 101 </title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+padding:20px;
+text-align:center;
+background:linear-gradient(-45deg,#ff6b6b,#feca57,#48dbfb,#1dd1a1,#5f27cd);
+background-size:400% 400%;
+animation:bg 10s ease infinite;
+}
+
+@keyframes bg{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+h1{
+margin-bottom:15px;
+}
+
+.top{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+font-size:20px;
+font-weight:bold;
+margin-bottom:15px;
+}
+
+#timer{
+color:red;
+}
+
+.answer{
+background:#eee;
+margin:8px;
+padding:12px;
+border-radius:10px;
+font-size:18px;
+font-weight:bold;
+}
+
+input{
+width:80%;
+padding:12px;
+border-radius:10px;
+border:none;
+font-size:16px;
+margin-top:15px;
+}
+
+button{
+padding:12px 18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+margin:5px;
+}
+
+#nextBtn{
+display:none;
+background:#1dd1a1;
+color:white;
+}
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+background:rgba(0,0,0,.85);
+color:white;
+font-size:40px;
+font-weight:bold;
+z-index:999;
+}
+
+.big{
+font-size:140px;
+}
+
+#mistakes{
+font-size:30px;
+margin:15px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>🎮 FAMILY 111 </h1>
+
+<div class="top">
+<div>🏆 Skor: <span id="score">0</span></div>
+<div id="timer">⏱️ 04:00</div>
+</div>
+
+<div id="mistakes">⬜⬜⬜⬜⬜</div>
+
+<h2 id="question"></h2>
+
+<div id="answers"></div>
+
+<input id="input" placeholder="Masukkan jawaban">
+
+<br>
+
+<button onclick="checkAnswer()">JAWAB</button>
+<button id="nextBtn" onclick="nextQuestion()">LANJUT ➜</button>
+
+</div>
+
+<div class="popup" id="popup"></div>
+
+<script>
+
+const questions=[
+{
+q:"Sebutkan alasan orang telat bangun",
+a:["Begadang","Lupa alarm","Capek","Sakit","Tidur lagi"]
+},
+{
+q:"Sebutkan makanan favorit anak sekolah",
+a:["Bakso","Mie instan","Ayam goreng","Nasi goreng","Jajanan kantin"]
+},
+{
+q:"Sebutkan benda yang sering ada di tas sekolah",
+a:["Buku","Pulpen","HP","Dompet","Penghapus"]
+},
+{
+q:"Sebutkan hal yang bikin orang ketawa",
+a:["Jokes","Meme","Teman lucu","Video lucu","Salah ngomong"]
+},
+{
+q:"Sebutkan alasan orang suka rebahan",
+a:["Capek","Mager","Santai","Main HP","Ngantuk"]
+},
+{
+q:"Sebutkan sesuatu yang biasa dibawa saat hujan",
+a:["Payung","Jas hujan","Tas","Topi","Botol minum"]
+},
+{
+q:"Sebutkan aplikasi yang sering dibuka orang",
+a:["WhatsApp","TikTok","Instagram","YouTube","Google"]
+},
+{
+q:"Sebutkan makanan yang sering dijual di kantin sekolah",
+a:["Bakso","Mie","Gorengan","Sosis","Nasi goreng"]
+},
+{
+q:"Sebutkan alasan orang membeli HP baru",
+a:["Rusak","Lemot","Kamera","Baterai","Gaya"]
+},
+{
+q:"Sebutkan benda yang sering ada di meja belajar",
+a:["Buku","Pulpen","Lampu","HP","Penghapus"]
+},
+{
+q:"Sebutkan sesuatu yang sering dicari saat mati listrik",
+a:["Senter","Lilin","HP","Powerbank","Korek"]
+},
+{
+q:"Sebutkan kegiatan yang dilakukan sebelum tidur",
+a:["Main HP","Sikat gigi","Berdoa","Minum","Nonton"]
+},
+{
+q:"Sebutkan kendaraan yang sering terlihat di jalan",
+a:["Motor","Mobil","Bus","Truk","Sepeda"]
+},
+{
+q:"Sebutkan rasa mi instan yang populer",
+a:["Ayam bawang","Soto","Rendang","Kari ayam","Ayam spesial"]
+},
+{
+q:"Sebutkan alasan orang pergi ke minimarket",
+a:["Belanja","Beli minum","Beli pulsa","Tarik tunai","Titip paket"]
+},
+{
+q:"Sebutkan benda yang sering jatuh dari meja",
+a:["HP","Pulpen","Penghapus","Botol","Buku"]
+},
+{
+q:"Sebutkan hal yang membuat orang ngantuk",
+a:["Begadang","Pelajaran","Hujan","Kenyang","Rebahan"]
+},
+{
+q:"Sebutkan aktivitas saat akhir pekan",
+a:["Main","Tidur","Jalan-jalan","Nonton","Olahraga"]
+},
+{
+q:"Sebutkan sesuatu yang biasanya ada di dapur",
+a:["Kompor","Panci","Sendok","Piring","Kulkas"]
+},
+{
+q:"Sebutkan benda yang sering dipinjam teman",
+a:["Pulpen","Penghapus","HP","Buku","Penggaris"]
+},
+{
+q:"Sebutkan alasan orang terlambat ke sekolah",
+a:["Bangun kesiangan","Macet","Hujan","Kendaraan rusak","Lupa waktu"]
+},
+{
+q:"Sebutkan minuman yang sering diminum saat panas",
+a:["Air putih","Es teh","Es jeruk","Soda","Jus"]
+},
+{
+q:"Sebutkan tempat yang sering dikunjungi siswa saat istirahat",
+a:["Kantin","Kelas","Perpustakaan","Lapangan","Toilet"]
+},
+{
+q:"Sebutkan barang yang sering dicas",
+a:["HP","Laptop","Powerbank","Tablet","Earbuds"]
+},
+{
+q:"Sebutkan alasan orang menggunakan internet",
+a:["Belajar","Main game","Chat","Nonton","Media sosial"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di ruang kelas",
+a:["Meja","Kursi","Papan tulis","Guru","Proyektor"]
+},
+{
+q:"Sebutkan alasan orang pergi ke dokter",
+a:["Sakit","Periksa kesehatan","Demam","Batuk","Cedera"]
+},
+{
+q:"Sebutkan benda yang sering ada di saku",
+a:["HP","Dompet","Kunci","Uang","Tisu"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang lupa waktu",
+a:["Game","TikTok","YouTube","Nonton film","Chat"]
+},
+{
+q:"Sebutkan makanan yang biasa dimakan saat sarapan",
+a:["Nasi goreng","Roti","Sereal","Mie","Telur"]
+},
+{
+q:"Sebutkan sesuatu yang biasa dilakukan setelah bangun tidur",
+a:["Cuci muka","Main HP","Sarapan","Merapikan tempat tidur","Sikat gigi"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di kamar tidur",
+a:["Kasur","Bantal","Lemari","HP","Meja"]
+},
+{
+q:"Sebutkan alasan orang pergi ke mall",
+a:["Belanja","Makan","Nonton","Jalan-jalan","Bermain"]
+},
+{
+q:"Sebutkan warna yang sering dipilih untuk motor",
+a:["Hitam","Putih","Merah","Biru","Silver"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di kulkas",
+a:["Air minum","Buah","Sayur","Es","Susu"]
+},
+{
+q:"Sebutkan benda yang sering hilang saat dibutuhkan",
+a:["Kunci","Remote","HP","Pulpen","Charger"]
+},
+{
+q:"Sebutkan kegiatan yang dilakukan saat menunggu",
+a:["Main HP","Ngobrol","Duduk","Makan","Melihat sekitar"]
+},
+{
+q:"Sebutkan alasan orang membeli laptop",
+a:["Sekolah","Kerja","Gaming","Editing","Kuliah"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibawa saat bepergian",
+a:["HP","Dompet","Tas","Uang","Botol minum"]
+},
+{
+q:"Sebutkan tempat favorit untuk foto-foto",
+a:["Pantai","Gunung","Mall","Taman","Kafe"]
+},
+{
+q:"Sebutkan hal yang sering membuat HP cepat habis baterai",
+a:["Game","Volume tinggi","Membuka kamera terlalu lama","Kecerahan tinggi","Hotspot"]
+},
+{
+q:"Sebutkan makanan yang sering dijadikan camilan",
+a:["Keripik","Biskuit","Cokelat","Permen","Kacang"]
+},
+{
+q:"Sebutkan alasan orang suka liburan",
+a:["Refreshing","Jalan-jalan","Foto-foto","Istirahat","Bersenang-senang"]
+},
+{
+q:"Sebutkan sesuatu yang biasanya ada di perpustakaan",
+a:["Buku","Rak","Meja","Kursi","Petugas"]
+},
+{
+q:"Sebutkan hal yang biasa dilakukan saat hujan",
+a:["Tidur","Main HP","Minum hangat","Nonton","Berteduh"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ditemukan di kamar mandi",
+a:["Sabun","Sampo","Sikat gigi","Handuk","Pasta gigi"]
+},
+{
+q:"Sebutkan alasan orang memakai earphone",
+a:["Mendengarkan musik","Menonton video","Main game","Telepon","Belajar"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di warung",
+a:["Mie instan","Minuman","Kerupuk","Permen","Roti"]
+},
+{
+q:"Sebutkan hal yang membuat orang senang",
+a:["Dapat uang","Liburan","Makan enak","Main game","Nilai bagus"]
+},
+{
+q:"Sebutkan benda yang sering dipakai saat sekolah",
+a:["Buku","Pulpen","Tas","Seragam","Sepatu"]
+},
+{
+q:"Sebutkan alasan orang pergi ke pantai",
+a:["Liburan","Bermain air","Foto-foto","Menikmati pemandangan","Olahraga"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di taman",
+a:["Pohon","Bangku","Bunga","Rumput","Lampu"]
+},
+{
+q:"Sebutkan kegiatan yang sering dilakukan di rumah",
+a:["Tidur","Makan","Main HP","Nonton","Belajar"]
+},
+{
+q:"Sebutkan benda elektronik yang ada di rumah",
+a:["TV","Kulkas","HP","Mesin cuci","Laptop"]
+},
+{
+q:"Sebutkan makanan yang sering dimakan saat nonton film",
+a:["Popcorn","Keripik","Cokelat","Permen","Biskuit"]
+},
+{
+q:"Sebutkan alasan orang membeli sepeda",
+a:["Olahraga","Transportasi","Hobi","Sekolah","Jalan-jalan"]
+},
+{
+q:"Sebutkan sesuatu yang sering dicari saat bepergian",
+a:["HP","Dompet","Tiket","Tas","Kunci"]
+},
+{
+q:"Sebutkan hal yang membuat orang gugup",
+a:["Ujian","Presentasi","Wawancara","Tampil di depan umum","Menunggu hasil"]
+},
+{
+q:"Sebutkan sesuatu yang biasa dilakukan saat libur sekolah",
+a:["Main","Tidur","Jalan-jalan","Nonton","Main game"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang tamu",
+a:["Sofa","TV","Meja","Karpet","Lemari"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli di supermarket",
+a:["Makanan","Minuman","Sabun","Tisu","Buah"]
+},
+{
+q:"Sebutkan alasan orang menonton YouTube",
+a:["Hiburan","Belajar","Review","Musik","Berita"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat naik bus",
+a:["Duduk","Main HP","Melihat keluar","Tidur","Ngobrol"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di pesta ulang tahun",
+a:["Kue","Balon","Lilin","Hadiah","Teman"]
+},
+{
+q:"Sebutkan benda yang sering dibawa ke sekolah saat hujan",
+a:["Payung","Jas hujan","Tas","Botol minum","Topi"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di kantong celana",
+a:["HP","Dompet","Kunci","Uang","Tisu"]
+},
+{
+q:"Sebutkan alasan orang pergi ke gym",
+a:["Olahraga","Menurunkan berat badan","Membentuk otot","Menjaga kesehatan","Hobi"]
+},
+{
+q:"Sebutkan benda yang sering digunakan untuk belajar",
+a:["Buku","Pulpen","Laptop","HP","Penggaris"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di halte",
+a:["Bus","Penumpang","Bangku","Atap","Jadwal"]
+},
+{
+q:"Sebutkan makanan yang sering dibeli di pinggir jalan",
+a:["Bakso","Sate","Gorengan","Siomay","Es teh"]
+},
+{
+q:"Sebutkan alasan orang membeli sepatu baru",
+a:["Rusak","Sekolah","Olahraga","Fashion","Kerja"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di meja makan",
+a:["Piring","Sendok","Gelas","Makanan","Tisu"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat menunggu teman",
+a:["Main HP","Ngobrol","Duduk","Makan","Jalan-jalan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di toko buku",
+a:["Buku","Pulpen","Pensil","Penghapus","Penggaris"]
+},
+{
+q:"Sebutkan alasan orang pergi ke kebun binatang",
+a:["Melihat hewan","Liburan","Foto-foto","Belajar","Jalan-jalan"]
+},
+{
+q:"Sebutkan benda yang sering ada di atas meja guru",
+a:["Buku","Pulpen","Laptop","Penghapus","Botol minum"]
+},
+{
+q:"Sebutkan sesuatu yang biasa dilakukan sebelum ujian",
+a:["Belajar","Berdoa","Membaca catatan","Diskusi","Istirahat"]
+},
+{
+q:"Sebutkan hal yang membuat orang lapar",
+a:["Olahraga","Belum makan","Mencium aroma makanan","Begadang","Perjalanan jauh"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di taman bermain",
+a:["Ayunan","Perosotan","Jungkat-jungkit","Bangku","Pohon"]
+},
+{
+q:"Sebutkan alasan orang membeli jam tangan",
+a:["Melihat waktu","Fashion","Hadiah","Koleksi","Olahraga"]
+},
+{
+q:"Sebutkan benda yang sering dipakai saat hujan",
+a:["Payung","Jas hujan","Sandal","Topi","Tas"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di stasiun kereta",
+a:["Kereta","Penumpang","Tiket","Petugas","Peron"]
+},
+{
+q:"Sebutkan kegiatan yang biasa dilakukan di malam hari",
+a:["Tidur","Nonton","Main HP","Belajar","Makan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko elektronik",
+a:["HP","Laptop","TV","Kulkas","Speaker"]
+},
+{
+q:"Sebutkan alasan orang suka naik gunung",
+a:["Pemandangan","Petualangan","Olahraga","Hobi","Refreshing"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di dalam mobil",
+a:["Setir","Kursi","AC","Radio","Sabuk pengaman"]
+},
+{
+q:"Sebutkan alasan orang pergi ke pasar",
+a:["Belanja","Membeli sayur","Mencari murah","Jualan","Membeli buah"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di pantai",
+a:["Pasir","Ombak","Kerang","Batu","Perahu"]
+},
+{
+q:"Sebutkan benda yang biasa ada di dalam kulkas",
+a:["Air","Buah","Sayur","Es","Susu"]
+},
+{
+q:"Sebutkan alasan orang memakai topi",
+a:["Panas","Gaya","Olahraga","Sekolah","Hujan"]
+},
+{
+q:"Sebutkan sesuatu yang sering dilakukan saat bosan",
+a:["Main HP","Tidur","Nonton","Makan","Jalan-jalan"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang guru",
+a:["Meja","Kursi","Laptop","Buku","Lemari"]
+},
+{
+q:"Sebutkan makanan yang sering dimakan saat piknik",
+a:["Roti","Ayam goreng","Keripik","Buah","Nasi"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibawa saat olahraga",
+a:["Botol minum","Handuk","Sepatu","Tas","Topi"]
+},
+{
+q:"Sebutkan alasan orang membeli tas baru",
+a:["Rusak","Sekolah","Kerja","Fashion","Travel"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di bandara",
+a:["Pesawat","Penumpang","Tiket","Petugas","Bagasi"]
+},
+{
+q:"Sebutkan benda yang sering dipakai untuk menulis",
+a:["Pulpen","Pensil","Spidol","Kapur","Marker"]
+},
+{
+q:"Sebutkan alasan orang pergi ke taman",
+a:["Olahraga","Jalan-jalan","Bermain","Refreshing","Foto-foto"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di warung kopi",
+a:["Kopi","Teh","Meja","Kursi","Kasir"]
+},
+{
+q:"Sebutkan kegiatan yang biasa dilakukan saat pagi hari",
+a:["Sarapan","Mandi","Sekolah","Olahraga","Membersihkan rumah"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di lapangan sepak bola",
+a:["Bola","Gawang","Rumput","Pemain","Wasit"]
+},
+{
+q:"Sebutkan alasan orang membeli sepeda motor",
+a:["Transportasi","Kerja","Sekolah","Hobi","Hemat waktu"]
+},
+{
+q:"Sebutkan benda yang sering ada di toko pakaian",
+a:["Baju","Celana","Jaket","Kasir","Manekin"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada saat pernikahan",
+a:["Pengantin","Tamu","Kue","Dekorasi","Fotografer"]
+},
+{
+q:"Sebutkan alasan orang pergi ke perpustakaan",
+a:["Membaca","Belajar","Meminjam buku","Mengerjakan tugas","Mencari referensi"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di meja kantor",
+a:["Laptop","Pulpen","Kertas","Mouse","Stapler"]
+},
+{
+q:"Sebutkan alasan orang membeli es krim",
+a:["Cuaca panas","Suka rasanya","Dessert","Lapar","Refreshing"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di sungai",
+a:["Air","Ikan","Batu","Sampah","Perahu"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat camping",
+a:["Tenda","Senter","Sleeping bag","Kompor","Tas"]
+},
+{
+q:"Sebutkan alasan orang pergi ke bioskop",
+a:["Nonton film","Refreshing","Jalan-jalan","Bersama teman","Kencan"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di ruang komputer",
+a:["Komputer","Meja","Kursi","Keyboard","Mouse"]
+},
+{
+q:"Sebutkan makanan yang sering dimakan saat lebaran",
+a:["Ketupat","Opor ayam","Rendang","Kue","Sambal goreng"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko roti",
+a:["Roti","Kue","Kasir","Etalase","Minuman"]
+},
+{
+q:"Sebutkan alasan orang bangun pagi",
+a:["Sekolah","Kerja","Olahraga","Ibadah","Perjalanan"]
+},
+{
+q:"Sebutkan benda yang sering digunakan saat memasak",
+a:["Pisau","Panci","Wajan","Sendok","Spatula"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di gunung",
+a:["Pohon","Batu","Kabut","Pendaki","Jalur"]
+},
+{
+q:"Sebutkan alasan orang menabung",
+a:["Membeli barang","Masa depan","Darurat","Liburan","Pendidikan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di toko buah",
+a:["Apel","Jeruk","Pisang","Semangka","Melon"]
+},
+{
+q:"Sebutkan benda yang sering dipakai saat berenang",
+a:["Kacamata renang","Pelampung","Handuk","Baju renang","Topi renang"]
+},
+{
+q:"Sebutkan alasan orang pergi ke restoran",
+a:["Makan","Berkumpul","Merayakan acara","Mencoba menu baru","Refreshing"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di ruang makan",
+a:["Meja","Kursi","Piring","Sendok","Gelas"]
+},
+{
+q:"Sebutkan kegiatan yang biasa dilakukan setelah pulang sekolah",
+a:["Makan","Tidur","Main","Belajar","Mandi"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko mainan",
+a:["Boneka","Mobil-mobilan","Puzzle","Lego","Balon"]
+},
+{
+q:"Sebutkan alasan orang membeli buku",
+a:["Belajar","Hobi membaca","Koleksi","Tugas","Referensi"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di lapangan basket",
+a:["Ring","Bola","Pemain","Wasit","Tribun"]
+},
+{
+q:"Sebutkan sesuatu yang sering dicari sebelum berangkat sekolah",
+a:["Tas","HP","Sepatu","Kaos kaki","Botol minum"]
+},
+{
+q:"Sebutkan alasan orang membuka kulkas",
+a:["Cari minum","Cari makanan","Ambil es","Iseng","Menyimpan makanan"]
+},
+{
+q:"Sebutkan sesuatu yang sering membuat orang panik",
+a:["HP hilang","Dompet hilang","Terlambat","Ujian","Baterai habis"]
+},
+{
+q:"Sebutkan benda yang biasanya ada di dekat kasir",
+a:["Mesin pembayaran","Permen","Uang","Struk","Keranjang"]
+},
+{
+q:"Sebutkan sesuatu yang biasa dilakukan saat menunggu hujan reda",
+a:["Main HP","Ngobrol","Tidur","Nonton","Makan"]
+},
+{
+q:"Sebutkan alasan orang membeli powerbank",
+a:["Baterai habis","Sering bepergian","Darurat","Kuliah","Kerja"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di acara sekolah",
+a:["Guru","Siswa","Kursi","Panggung","Sound system"]
+},
+{
+q:"Sebutkan benda yang sering ada di samping tempat tidur",
+a:["HP","Charger","Botol minum","Bantal","Jam"]
+},
+{
+q:"Sebutkan alasan orang suka hari Jumat",
+a:["Besok libur","Santai","Kumpul teman","Pulang cepat","Akhir pekan"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli saat lapar malam",
+a:["Mie instan","Roti","Nasi goreng","Bakso","Minuman"]
+},
+{
+q:"Sebutkan benda yang sering ada di laci meja",
+a:["Pulpen","Kertas","Penghapus","Uang","Kunci"]
+},
+{
+q:"Sebutkan sesuatu yang sering dilakukan saat jaringan internet lambat",
+a:["Refresh","Restart HP","Pindah WiFi","Mengeluh","Menunggu"]
+},
+{
+q:"Sebutkan alasan orang pergi ke ATM",
+a:["Ambil uang","Transfer","Cek saldo","Setor tunai","Bayar tagihan"]
+},
+{
+q:"Sebutkan sesuatu yang biasa ada di warung makan",
+a:["Meja","Kursi","Menu","Kasir","Tisu"]
+},
+{
+q:"Sebutkan hal yang membuat orang tersenyum",
+a:["Dipuji","Dapat hadiah","Ketemu teman","Makan enak","Lelucon"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di taman kota",
+a:["Pohon","Bangku","Lampu","Rumput","Jogger"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat naik pesawat",
+a:["Tiket","HP","Tas","Dompet","Paspor"]
+},
+{
+q:"Sebutkan alasan orang membeli headset",
+a:["Musik","Game","Meeting","Nonton","Belajar"]
+},
+{
+q:"Sebutkan sesuatu yang biasa dilakukan setelah makan",
+a:["Minum","Cuci tangan","Main HP","Istirahat","Sikat gigi"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang tertawa di internet",
+a:["Meme","Video lucu","Komentar","Prank","Stiker"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat bosan di kelas",
+a:["Main HP","Menggambar","Mengobrol","Melamun","Tidur"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang UKS",
+a:["Kasur","Obat","P3K","Termometer","Selimut"]
+},
+{
+q:"Sebutkan alasan orang membawa botol minum",
+a:["Haus","Olahraga","Sekolah","Hemat","Travel"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat istirahat sekolah",
+a:["Makan","Main","Ngobrol","Ke kantin","Tidur"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko sepatu",
+a:["Sepatu","Sandal","Rak","Kasir","Kotak"]
+},
+{
+q:"Sebutkan alasan orang memakai jaket",
+a:["Dingin","Gaya","Hujan","Motoran","Travel"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat jalan jauh",
+a:["HP","Dompet","Tas","Minum","Charger"]
+},
+{
+q:"Sebutkan hal yang membuat orang semangat",
+a:["Hadiah","Liburan","Nilai bagus","Dipuji","Menang"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di ruang olahraga",
+a:["Bola","Matras","Ring","Raket","Jaring"]
+},
+{
+q:"Sebutkan alasan orang membeli minuman dingin",
+a:["Panas","Haus","Segar","Enak","Setelah olahraga"]
+},
+{
+q:"Sebutkan benda yang sering ada di rumah sakit",
+a:["Dokter","Pasien","Tempat tidur","Obat","Perawat"]
+},
+{
+q:"Sebutkan hal yang dilakukan saat bangun kesiangan",
+a:["Lari","Buru-buru","Telat","Tidak sarapan","Panik"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di warung kecil",
+a:["Mie instan","Minuman","Gas","Snack","Rokok"]
+},
+{
+q:"Sebutkan alasan orang pergi ke sekolah",
+a:["Belajar","Teman","Tugas","Guru","Ujian"]
+},
+{
+q:"Sebutkan benda yang sering ada di tas HP",
+a:["HP","Powerbank","Charger","Earphone","Kabel"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat libur panjang",
+a:["Tidur","Jalan-jalan","Main game","Pulang kampung","Nonton"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di kamar kos",
+a:["Kasur","Meja","Kipas","Lemari","HP"]
+},
+{
+q:"Sebutkan alasan orang memakai kacamata",
+a:["Minus","Gaya","Silau","Belajar","Dokter"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang musik",
+a:["Speaker","Gitar","Mic","Keyboard","Drum"]
+},
+{
+q:"Sebutkan hal yang bikin orang malas bergerak",
+a:["Capek","Mager","Main HP","Tidur","Cuaca panas"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli saat gajian",
+a:["Makanan","HP","Baju","Tabungan","Hiburan"]
+},
+{
+q:"Sebutkan alasan orang belajar kelompok",
+a:["Cepat paham","Diskusi","Tugas","Persiapan ujian","Kerja sama"]
+},
+{
+q:"Sebutkan benda yang sering ada di toko HP",
+a:["HP","Charger","Case","Earphone","Kabel"]
+},
+{
+q:"Sebutkan hal yang dilakukan saat listrik mati",
+a:["Senter","Main HP","Lilin","Tidur","Ngobrol"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di taman bermain anak",
+a:["Ayunan","Perosotan","Pasir","Jungkat-jungkit","Bangku"]
+},
+{
+q:"Sebutkan alasan orang suka nonton film",
+a:["Hiburan","Bosan","Cerita","Teman","Relaksasi"]
+},
+{
+q:"Sebutkan benda yang sering dibawa ke sekolah saat ujian",
+a:["Pensil","Pulpen","Penghapus","Kartu","Alat tulis"]
+},
+{
+q:"Sebutkan hal yang membuat orang cepat lapar",
+a:["Olahraga","Belum makan","Aroma makanan","Aktivitas","Begadang"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di halte bus",
+a:["Bangku","Orang","Bus","Jadwal","Atap"]
+},
+{
+q:"Sebutkan alasan orang pergi ke cafe",
+a:["Ngopi","Kerja","Nongkrong","Belajar","Foto"]
+},
+{
+q:"Sebutkan benda yang sering ada di meja komputer",
+a:["Keyboard","Mouse","Monitor","Speaker","Kabel"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat menunggu antrian",
+a:["Main HP","Duduk","Ngobrol","Melihat sekitar","Mengantri"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli di toko kelontong",
+a:["Sabun","Mie","Minuman","Tisu","Snack"]
+},
+{
+q:"Sebutkan alasan orang memakai sepatu olahraga",
+a:["Lari","Sekolah","Nyaman","Olahraga","Gaya"]
+},
+{
+q:"Sebutkan benda yang sering ada di lapangan upacara",
+a:["Tiang","Bendera","Siswa","Guru","Lapangan"]
+},
+{
+q:"Sebutkan hal yang dilakukan saat hujan deras",
+a:["Berteduh","Tidur","Minum hangat","Nonton","Main HP"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko alat tulis",
+a:["Buku","Pulpen","Pensil","Penghapus","Penggaris"]
+},
+{
+q:"Sebutkan alasan orang suka hari libur",
+a:["Santai","Tidur","Jalan-jalan","Main","Kumpul keluarga"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat sekolah olahraga",
+a:["Sepatu","Baju olahraga","Botol minum","Handuk","Tas"]
+},
+{
+q:"Sebutkan hal yang membuat orang senang di sekolah",
+a:["Guru baik","Nilai bagus","Pulang cepat","Ditraktir","Dapat susu dari MBG"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di perpustakaan sekolah",
+a:["Buku","Rak","Meja","Kursi","Petugas"]
+},
+{
+q:"Sebutkan alasan orang menyalakan AC",
+a:["Panas","Nyaman","Tidur","Belajar","Kerja"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang kelas komputer",
+a:["Komputer","Mouse","Keyboard","Meja","Kursi"]
+},
+{
+q:"Sebutkan hal yang dilakukan sebelum pergi tidur",
+a:["Sikat gigi","Main HP","Berdoa","Minum","Matikan lampu"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibawa saat camping malam",
+a:["Tenda","Senter","Sleeping bag","Kompor","Tas"]
+},
+{
+q:"Sebutkan alasan orang suka jajan",
+a:["Lapar","Enak","Iseng","Teman ngajak","Murah"]
+},
+{
+q:"Sebutkan benda yang sering ada di meja belajar",
+a:["Buku","Pulpen","Lampu","HP","Penghapus"]
+},
+{
+q:"Sebutkan hal yang dilakukan saat istirahat sekolah",
+a:["Makan","Main","Ngobrol","Ke kantin","Tidur"]
+},
+{
+q:"Sebutkan makanan yang sering dibeli di pinggir jalan",
+a:["Bakso","Sate","Gorengan","Siomay","Es teh"]
+},
+{
+q:"Sebutkan alasan orang main HP",
+a:["Chat","Game","Bosan","Belajar","Hiburan"]
+},
+{
+q:"Sebutkan benda yang sering ada di kamar tidur",
+a:["Kasur","Bantal","Selimut","Lemari","HP"]
+},
+{
+q:"Sebutkan sesuatu yang sering dilakukan sebelum tidur",
+a:["Sikat gigi","Main HP","Berdoa","Minum","Nonton"]
+},
+{
+q:"Sebutkan alasan orang pergi ke sekolah",
+a:["Belajar","Teman","Tugas","Guru","Ujian"]
+},
+{
+q:"Sebutkan benda yang sering dipakai di kelas",
+a:["Meja","Kursi","Buku","Pulpen","Papan tulis"]
+},
+{
+q:"Sebutkan makanan yang sering dimakan saat sarapan",
+a:["Roti","Nasi goreng","Sereal","Telur","Mie"]
+},
+{
+q:"Sebutkan alasan orang naik kendaraan",
+a:["Cepat","Jauh","Kerja","Sekolah","Perjalanan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di dapur",
+a:["Kompor","Panci","Wajan","Sendok","Kulkas"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat sekolah",
+a:["Tas","Buku","Pulpen","HP","Botol minum"]
+},
+{
+q:"Sebutkan alasan orang pergi ke mall",
+a:["Belanja","Makan","Nonton","Jalan-jalan","Hangout"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di rumah",
+a:["TV","Kulkas","Meja","Kursi","HP"]
+},
+{
+q:"Sebutkan benda yang sering dipakai saat hujan",
+a:["Payung","Jas hujan","Sandal","Topi","Tas"]
+},
+{
+q:"Sebutkan alasan orang bermain game",
+a:["Seru","Hiburan","Bosan","Santai","Mengisi waktu"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di sekolah",
+a:["Guru","Siswa","Meja","Kursi","Papan tulis"]
+},
+{
+q:"Sebutkan benda yang sering dipakai menulis",
+a:["Pulpen","Pensil","Spidol","Kapur","Marker"]
+},
+{
+q:"Sebutkan alasan orang pergi ke pantai",
+a:["Liburan","Main air","Foto","Santai","Refreshing"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di kamar mandi",
+a:["Sabun","Sampo","Sikat gigi","Handuk","Pasta gigi"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang tamu",
+a:["Sofa","TV","Meja","Karpet","Lemari"]
+},
+{
+q:"Sebutkan alasan orang tidur siang",
+a:["Capek","Santai","Istirahat","Ngantuk","Libur"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli di warung",
+a:["Mie instan","Snack","Minuman","Roti","Gorengan"]
+},
+{
+q:"Sebutkan benda yang sering ada di tas sekolah",
+a:["Buku","Pulpen","HP","Dompet","Penghapus"]
+},
+{
+q:"Sebutkan alasan orang pergi ke dokter",
+a:["Sakit","Periksa","Demam","Cedera","Kontrol"]
+},
+{
+q:"Sebutkan sesuatu yang sering dilakukan saat pagi",
+a:["Bangun","Mandi","Sarapan","Sekolah","Olahraga"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang kelas",
+a:["Meja","Kursi","Papan tulis","Spidol","Penghapus"]
+},
+{
+q:"Sebutkan alasan orang makan",
+a:["Lapar","Enak","Energi","Kebiasaan","Jadwal"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibawa saat jalan-jalan",
+a:["HP","Dompet","Tas","Minum","Uang"]
+},
+{
+q:"Sebutkan benda yang sering ada di perpustakaan",
+a:["Buku","Rak","Meja","Kursi","Petugas"]
+},
+{
+q:"Sebutkan alasan orang belajar kelompok",
+a:["Cepat paham","Diskusi","Tugas","Persiapan ujian","Kerja sama"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di jalan raya",
+a:["Motor","Mobil","Lampu merah","Bus","truk"]
+},
+{
+q:"Sebutkan benda yang sering dipakai saat olahraga",
+a:["Sepatu","Baju olahraga","Handuk","Botol minum","Tas"]
+},
+{
+q:"Sebutkan alasan orang pergi ke pasar",
+a:["Belanja","Murah","Sayur","Buah","Jualan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di bioskop",
+a:["Kursi","Layar","Film","Penonton","Snack"]
+},
+{
+q:"Sebutkan benda yang sering ada di kantor",
+a:["Laptop","Kertas","Pulpen","Meja","Printer"]
+},
+{
+q:"Sebutkan alasan orang pergi liburan",
+a:["Refreshing","Bosan","Kumpul keluarga","Jalan-jalan","Istirahat"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di taman",
+a:["Pohon","Bunga","Bangku","Rumput","Lampu"]
+},
+{
+q:"Sebutkan benda yang sering digunakan saat hujan",
+a:["Payung","Jas hujan","Sandal","Tas","Topi"]
+},
+{
+q:"Sebutkan hewan yang sering dijadikan peliharaan",
+a:["Kucing","Anjing","Ikan","Burung","Kelinci"]
+},
+{
+q:"Sebutkan buah yang sering dibawa saat menjenguk orang sakit",
+a:["Apel","Jeruk","Anggur","Pir","Pisang"]
+},
+{
+q:"Sebutkan benda yang sering ada di dalam dompet",
+a:["Uang","KTP","ATM","Foto","Struk"]
+},
+{
+q:"Sebutkan cita-cita yang sering dimiliki anak-anak",
+a:["Dokter","Guru","Polisi","Tentara","Pilot"]
+},
+{
+q:"Sebutkan warna yang sering dipakai untuk seragam olahraga",
+a:["Merah","Biru","Putih","Hitam","Hijau"]
+},
+{
+q:"Sebutkan alasan orang pergi ke salon",
+a:["Potong rambut","Perawatan","Styling","Cat rambut","Refreshing"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di kamar hotel",
+a:["Kasur","TV","AC","Handuk","Lemari"]
+},
+{
+q:"Sebutkan makanan yang sering disajikan saat hajatan",
+a:["Nasi","Ayam","Soto","Bakso","Kerupuk"]
+},
+{
+q:"Sebutkan benda yang sering ada di dalam mobil",
+a:["Setir","Kursi","AC","Radio","Sabuk pengaman"]
+},
+{
+q:"Sebutkan kegiatan yang sering dilakukan saat malam minggu",
+a:["Jalan-jalan","Nonton","Main game","Nongkrong","Tidur"]
+},
+{
+q:"Sebutkan alasan orang membeli sepeda",
+a:["Olahraga","Transportasi","Hobi","Sekolah","Jalan-jalan"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang kepala sekolah",
+a:["Meja","Kursi","Laptop","Lemari","Piagam"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan setelah menerima gaji",
+a:["Belanja","Menabung","Bayar tagihan","Makan","Traktir"]
+},
+{
+q:"Sebutkan makanan yang sering dijual di acara car free day",
+a:["Air mineral","Sosis","Dimsum Mentai","Es teh","Burger"]
+},
+{
+q:"Sebutkan alasan orang pergi ke bank",
+a:["Menabung","Ambil uang","Transfer","Pinjam uang","Cetak buku"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang tamu",
+a:["Sofa","TV","Meja","Karpet","Lemari"]
+},
+{
+q:"Sebutkan kegiatan yang dilakukan saat listrik mati",
+a:["Main HP","Tidur","Ngobrol","Menyalakan lilin","Mencari senter"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di tempat fotokopi",
+a:["Kertas","Printer","Mesin fotokopi","Pulpen","Stapler"]
+},
+{
+q:"Sebutkan alasan orang membeli kamera",
+a:["Fotografi","Konten","Kerja","Hobi","Dokumentasi"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang terlambat",
+a:["Macet","Bangun kesiangan","Hujan","Lupa waktu","Kendaraan rusak"]
+},
+{
+q:"Sebutkan makanan yang sering dimakan saat begadang",
+a:["Mie instan","Kopi","Roti","Snack","Gorengan"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang guru",
+a:["Meja","Kursi","Laptop","Buku","Lemari"]
+},
+{
+q:"Sebutkan alasan orang membeli motor baru",
+a:["Motor lama rusak","Kerja","Sekolah","Gaya","Hobi"]
+},
+{
+q:"Sebutkan hal yang dilakukan sebelum berangkat sekolah",
+a:["Mandi","Sarapan","Memakai seragam","Berdoa","Menyiapkan tas"]
+},
+{
+q:"Sebutkan benda yang sering ada di lapangan basket",
+a:["Ring","Bola","Pemain","Wasit","Tribun"]
+},
+{
+q:"Sebutkan alasan orang pergi ke toko buku",
+a:["Membeli buku","Belajar","Tugas","Mencari referensi","Hobi"]
+},
+{
+q:"Sebutkan makanan yang sering dibeli saat buka puasa",
+a:["Kolak","Es buah","Gorengan","Kurma","Bakso"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang komputer",
+a:["Komputer","Keyboard","Mouse","Meja","Kursi"]
+},
+{
+q:"Sebutkan kegiatan yang sering dilakukan di hari Minggu",
+a:["Tidur","Jalan-jalan","Olahraga","Nonton","Berkumpul keluarga"]
+},
+{
+q:"Sebutkan alasan orang membeli jam tangan",
+a:["Melihat waktu","Fashion","Hadiah","Koleksi","Olahraga"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di taman kota",
+a:["Pohon","Bangku","Lampu","Rumput","Bunga"]
+},
+{
+q:"Sebutkan makanan yang sering dimakan saat piknik",
+a:["Roti","Ayam goreng","Keripik","Buah","Nasi"]
+},
+{
+q:"Sebutkan alasan orang pergi ke gunung",
+a:["Mendaki","Refreshing","Olahraga","Pemandangan","Petualangan"]
+},
+{
+q:"Sebutkan benda yang sering ada di dalam kulkas",
+a:["Air","Buah","Sayur","Es","Susu"]
+},
+{
+q:"Sebutkan kegiatan yang sering dilakukan saat hujan",
+a:["Tidur","Nonton","Main HP","Minum hangat","Makan"]
+},
+{
+q:"Sebutkan alasan orang membeli headset",
+a:["Musik","Game","Meeting","Nonton","Belajar"]
+},
+{
+q:"Sebutkan benda yang sering ada di meja makan",
+a:["Piring","Sendok","Gelas","Makanan","Tisu"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang senang",
+a:["Dapat uang","Nilai bagus","Liburan","Makan enak","Hadiah"]
+},
+{
+q:"Sebutkan alasan orang pergi ke stadion",
+a:["Menonton pertandingan","Olahraga","Konser","Acara","Bekerja"]
+},
+{
+q:"Sebutkan benda yang sering ada di toko elektronik",
+a:["HP","Laptop","TV","Speaker","Kulkas"]
+},
+{
+q:"Sebutkan kegiatan yang dilakukan saat menunggu teman",
+a:["Main HP","Ngobrol","Duduk","Makan","Jalan-jalan"]
+},
+{
+q:"Sebutkan alasan orang membeli baju baru",
+a:["Fashion","Acara","Baju lama rusak","Hadiah","Sekolah"]
+},
+{
+q:"Sebutkan benda yang sering ada di kantin sekolah",
+a:["Meja","Kursi","Makanan","Minuman","Kasir"]
+},
+{
+q:"Sebutkan makanan yang sering dibeli di minimarket",
+a:["Snack","Roti","Mie instan","Es krim","Minuman"]
+},
+{
+q:"Sebutkan alasan orang pergi ke bandara",
+a:["Naik pesawat","Menjemput","Mengantar","Kerja","Liburan"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di stasiun kereta",
+a:["Kereta","Tiket","Peron","Penumpang","Petugas"]
+},
+{
+q:"Sebutkan kegiatan yang sering dilakukan saat libur panjang",
+a:["Jalan-jalan","Tidur","Main game","Pulang kampung","Nonton"]
+},
+{
+q:"Sebutkan alasan orang membeli laptop",
+a:["Sekolah","Kerja","Gaming","Editing","Kuliah"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang UKS",
+a:["Obat","Kasur","Termometer","P3K","Selimut"]
+},
+{
+q:"Sebutkan hal yang membuat orang gugup",
+a:["Ujian","Presentasi","Wawancara","Menunggu hasil","Tampil di depan umum"]
+},
+{
+q:"Sebutkan sesuatu yang sering dicari saat pagi hari",
+a:["HP","Kacamata","Handuk","Seragam","Kaos kaki"]
+},
+{
+q:"Sebutkan benda yang sering ada di dalam dompet",
+a:["Uang","KTP","ATM","Struk","Foto"]
+},
+{
+q:"Sebutkan alasan orang membeli parfum",
+a:["Wangi","Percaya diri","Hadiah","Kerja","Sekolah"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di kantin",
+a:["Makanan","Minuman","Meja","Kursi","Kasir"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang terlambat",
+a:["Macet","Bangun kesiangan","Lupa waktu","Hujan","Kendaraan rusak"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang tamu",
+a:["TV","Sofa","Meja","Karpet","Lemari"]
+},
+{
+q:"Sebutkan alasan orang suka bermain game",
+a:["Hiburan","Teman","Kompetisi","Mengisi waktu","Hobi"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli saat ke minimarket",
+a:["Minuman","Snack","Mie instan","Sabun","Pulsa"]
+},
+{
+q:"Sebutkan benda yang sering digunakan saat hujan",
+a:["Payung","Jas hujan","Sandal","Topi","Tas"]
+},
+{
+q:"Sebutkan alasan orang pergi ke stadion",
+a:["Menonton bola","Konser","Acara","Olahraga","Mendukung tim"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di meja makan",
+a:["Piring","Sendok","Gelas","Makanan","Tisu"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat malam minggu",
+a:["Jalan-jalan","Nonton","Main game","Nongkrong","Tidur"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat naik motor",
+a:["Helm","HP","Dompet","Jaket","Kunci"]
+},
+{
+q:"Sebutkan alasan orang pergi ke toko buku",
+a:["Membeli buku","Belajar","Mencari referensi","Tugas","Hobi"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di lapangan",
+a:["Rumput","Bola","Pemain","Wasit","Gawang"]
+},
+{
+q:"Sebutkan benda yang sering ada di dapur",
+a:["Kompor","Panci","Wajan","Sendok","Piring"]
+},
+{
+q:"Sebutkan alasan orang membeli charger",
+a:["Rusak","Cadangan","Hilang","Butuh cepat","Perjalanan"]
+},
+{
+q:"Sebutkan sesuatu yang sering dilakukan saat naik kereta",
+a:["Duduk","Main HP","Tidur","Ngobrol","Melihat keluar"]
+},
+{
+q:"Sebutkan benda yang sering ada di toko elektronik",
+a:["HP","Laptop","TV","Speaker","Kulkas"]
+},
+{
+q:"Sebutkan alasan orang suka makan bakso",
+a:["Enak","Murah","Mengenyangkan","Kuah hangat","Favorit"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di sekolah",
+a:["Guru","Siswa","Kelas","Papan tulis","Kantin"]
+},
+{
+q:"Sebutkan benda yang sering dipakai saat olahraga",
+a:["Sepatu","Baju olahraga","Handuk","Botol minum","Topi"]
+},
+{
+q:"Sebutkan alasan orang pergi ke warung",
+a:["Belanja","Beli minum","Beli makanan","Isi pulsa","Ngobrol"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di kamar",
+a:["Kasur","Bantal","Lemari","Meja","HP"]
+},
+{
+q:"Sebutkan hal yang membuat orang bahagia",
+a:["Liburan","Dapat uang","Nilai bagus","Hadiah","Berkumpul keluarga"]
+},
+{
+q:"Sebutkan benda yang sering ada di kendaraan",
+a:["Kursi","Setir","Spion","Ban","Lampu"]
+},
+{
+q:"Sebutkan alasan orang membeli sepatu",
+a:["Sekolah","Olahraga","Kerja","Fashion","Rusak"]
+},
+{
+q:"Sebutkan sesuatu yang sering dilakukan setelah makan",
+a:["Minum","Istirahat","Main HP","Cuci tangan","Sikat gigi"]
+},
+{
+q:"Sebutkan benda yang sering ada di tas anak sekolah",
+a:["Buku","Pulpen","Penghapus","HP","Botol minum"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang kaget",
+a:["Suara keras","Nilai jelek","Jatuh","Lampu mati","Prank"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di dalam mobil",
+a:["Setir","Kursi","AC","Radio","Sabuk pengaman"]
+},
+{
+q:"Sebutkan alasan orang membeli smartwatch",
+a:["Olahraga","Notifikasi","Gaya","Kesehatan","Hobi"]
+},
+{
+q:"Sebutkan benda yang sering ada di kamar mandi",
+a:["Sabun","Sampo","Handuk","Sikat gigi","Pasta gigi"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat perjalanan jauh",
+a:["Tidur","Main HP","Makan","Ngobrol","Melihat pemandangan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di pantai",
+a:["Pasir","Ombak","Kerang","Batu","Perahu"]
+},
+{
+q:"Sebutkan alasan orang pergi ke konser",
+a:["Musik","Idola","Hiburan","Teman","Pengalaman"]
+},
+{
+q:"Sebutkan benda yang sering ada di meja guru",
+a:["Buku","Pulpen","Laptop","Botol minum","Penghapus"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli saat cuaca panas",
+a:["Es teh","Es krim","Air mineral","Jus","Soda"]
+},
+{
+q:"Sebutkan alasan orang memakai sandal",
+a:["Nyaman","Cepat","Santai","Rumah","Murah"]
+},
+{
+q:"Sebutkan benda yang sering ada di warung kopi",
+a:["Kopi","Teh","Meja","Kursi","Kasir"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang malu",
+a:["Salah ngomong","Jatuh","Ditertawakan","Lupa nama","Salah jawab"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di taman kota",
+a:["Pohon","Bangku","Rumput","Lampu","Bunga"]
+},
+{
+q:"Sebutkan alasan orang membeli motor",
+a:["Transportasi","Kerja","Sekolah","Hobi","Hemat waktu"]
+},
+{
+q:"Sebutkan benda yang sering dipakai saat memasak",
+a:["Pisau","Panci","Wajan","Sendok","Spatula"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan sebelum berangkat sekolah",
+a:["Mandi","Sarapan","Memakai seragam","Berdoa","Menyiapkan tas"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di sungai",
+a:["Air","Ikan","Batu","Perahu","Sampah"]
+},
+{
+q:"Sebutkan alasan orang membeli kacamata",
+a:["Minus","Gaya","Silau","Mata lelah","Kebutuhan"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang komputer",
+a:["Komputer","Mouse","Keyboard","Monitor","Meja"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat menunggu makanan datang",
+a:["Main HP","Ngobrol","Melihat menu","Minum","Menunggu"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di pesta ulang tahun",
+a:["Kue","Balon","Lilin","Hadiah","Teman"]
+},
+{
+q:"Sebutkan alasan orang suka akhir pekan",
+a:["Libur","Santai","Jalan-jalan","Tidur","Berkumpul keluarga"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat piknik",
+a:["Makanan","Minuman","Tikar","Tas","Kamera"]
+},
+{
+q:"Sebutkan hal yang sering membuat HP panas",
+a:["Game","Charging","Hotspot","Video","Banyak aplikasi"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di bandara",
+a:["Pesawat","Penumpang","Tiket","Bagasi","Petugas"]
+},
+{
+q:"Sebutkan alasan orang membeli laptop",
+a:["Sekolah","Kerja","Kuliah","Gaming","Editing"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di ruang tamu",
+a:["TV","Sofa","Meja","Karpet","Lemari"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat hujan turun",
+a:["Berteduh","Tidur","Main HP","Nonton","Minum hangat"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko pakaian",
+a:["Baju","Celana","Jaket","Kasir","Manekin"]
+},
+{
+q:"Sebutkan alasan orang membeli earphone",
+a:["Musik","Game","Belajar","Telepon","Nonton"]
+},
+{
+q:"Sebutkan benda yang sering ada di dekat tempat tidur",
+a:["HP","Charger","Jam","Botol minum","Lampu"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di kulkas",
+a:["Air","Es","Buah","Sayur","Susu"]
+},
+{
+q:"Sebutkan alasan orang membeli tas",
+a:["Sekolah","Kerja","Travel","Fashion","Rusak"]
+},
+{
+q:"Sebutkan benda yang sering ada di kantor",
+a:["Laptop","Meja","Kursi","Printer","Kertas"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang panik",
+a:["HP hilang","Dompet hilang","Terlambat","Ujian","Baterai habis"]
+},
+{
+q:"Sebutkan sesuatu yang sering dibeli di toko buah",
+a:["Apel","Jeruk","Pisang","Semangka","Melon"]
+},
+{
+q:"Sebutkan alasan orang suka tidur siang",
+a:["Capek","Ngantuk","Libur","Santai","Habis makan"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang guru",
+a:["Meja","Kursi","Laptop","Buku","Lemari"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat menunggu bus",
+a:["Main HP","Duduk","Ngobrol","Melihat jalan","Mendengarkan musik"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di warung makan",
+a:["Meja","Kursi","Menu","Kasir","Tisu"]
+},
+{
+q:"Sebutkan alasan orang pergi ke toko HP",
+a:["Beli HP","Servis","Beli charger","Beli case","Lihat produk"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat bepergian",
+a:["HP","Dompet","Tas","Uang","Charger"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang tersenyum",
+a:["Dipuji","Dapat hadiah","Ketemu teman","Lelucon","Nilai bagus"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di halte",
+a:["Bus","Bangku","Penumpang","Atap","Jadwal"]
+},
+{
+q:"Sebutkan alasan orang pergi ke taman",
+a:["Olahraga","Jalan-jalan","Refreshing","Bermain","Foto-foto"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang makan",
+a:["Meja","Kursi","Piring","Sendok","Gelas"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan sebelum ujian",
+a:["Belajar","Berdoa","Membaca catatan","Diskusi","Istirahat"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko mainan",
+a:["Boneka","Mobil-mobilan","Puzzle","Lego","Balon"]
+},
+{
+q:"Sebutkan alasan orang membeli buku",
+a:["Belajar","Tugas","Referensi","Koleksi","Hobi"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di lapangan basket",
+a:["Bola","Ring","Pemain","Wasit","Tribun"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat bangun pagi",
+a:["Mandi","Sarapan","Cuci muka","Olahraga","Berdoa"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di restoran",
+a:["Meja","Kursi","Menu","Kasir","Pelayan"]
+},
+{
+q:"Sebutkan alasan orang pergi ke pasar malam",
+a:["Jajan","Main","Belanja","Jalan-jalan","Hiburan"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang keluarga",
+a:["TV","Sofa","Meja","Remote","Karpet"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat listrik mati",
+a:["Main HP","Tidur","Ngobrol","Cari lilin","Cari senter"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko roti",
+a:["Roti","Kue","Etalase","Kasir","Minuman"]
+},
+{
+q:"Sebutkan alasan orang suka naik sepeda",
+a:["Olahraga","Hobi","Santai","Sehat","Hemat"]
+},
+{
+q:"Sebutkan benda yang sering ada di kamar kos",
+a:["Kasur","Meja","Kipas","Lemari","HP"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang lapar",
+a:["Olahraga","Belum makan","Aroma makanan","Begadang","Perjalanan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di kebun",
+a:["Pohon","Rumput","Buah","Bunga","Tanah"]
+},
+{
+q:"Sebutkan alasan orang pergi ke toko bangunan",
+a:["Renovasi","Membangun rumah","Membeli cat","Membeli semen","Perbaikan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di meja kasir",
+a:["Komputer","Uang","Struk","Scanner","Permen"]
+},
+{
+q:"Sebutkan alasan orang membeli baju baru",
+a:["Fashion","Acara","Lebaran","Rusak","Hadiah"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di ruang kelas",
+a:["Meja","Kursi","Papan tulis","Spidol","Siswa"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat menunggu teman",
+a:["Main HP","Ngobrol","Duduk","Jalan-jalan","Makan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di dalam freezer",
+a:["Es batu","Es krim","Daging","Nugget","Ayam"]
+},
+{
+q:"Sebutkan alasan orang membeli sepeda",
+a:["Olahraga","Hobi","Transportasi","Sehat","Jalan-jalan"]
+},
+{
+q:"Sebutkan benda yang sering ada di dekat TV",
+a:["Remote","Speaker","Meja","Kabel","Set Top Box"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang menguap",
+a:["Ngantuk","Bosan","Capek","Kurang tidur","Pelajaran"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di taman bermain",
+a:["Ayunan","Perosotan","Jungkat-jungkit","Bangku","Pohon"]
+},
+{
+q:"Sebutkan alasan orang membeli mouse komputer",
+a:["Rusak","Gaming","Kerja","Sekolah","Cadangan"]
+},
+{
+q:"Sebutkan benda yang sering dibawa saat naik pesawat",
+a:["Tiket","Paspor","Tas","HP","Dompet"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat jam kosong",
+a:["Ngobrol","Main HP","Tidur","Mengerjakan tugas","Jajan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko olahraga",
+a:["Sepatu","Bola","Raket","Jersey","Tas"]
+},
+{
+q:"Sebutkan alasan orang suka makan mie instan",
+a:["Enak","Murah","Praktis","Mengenyangkan","Cepat"]
+},
+{
+q:"Sebutkan benda yang sering ada di ruang perpustakaan",
+a:["Buku","Rak","Meja","Kursi","Petugas"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang lupa waktu",
+a:["Game","TikTok","YouTube","Film","Chat"]
+},
+{
+q:"Sebutkan sesuatu yang sering ditemukan di sungai",
+a:["Air","Ikan","Batu","Sampah","Perahu"]
+},
+{
+q:"Sebutkan alasan orang pergi ke fotokopi",
+a:["Print","Fotokopi","Scan","Jilid","Beli ATK"]
+},
+{
+q:"Sebutkan benda yang sering ada di dalam laci",
+a:["Pulpen","Uang","Kunci","Kertas","Penghapus"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan setelah mandi",
+a:["Memakai baju","Menyisir rambut","Main HP","Makan","Pergi"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di ruang tunggu",
+a:["Kursi","Orang","TV","AC","Majalah"]
+},
+{
+q:"Sebutkan alasan orang membeli kipas angin",
+a:["Panas","Murah","Hemat listrik","Cadangan","Nyaman"]
+},
+{
+q:"Sebutkan benda yang sering ditemukan di garasi",
+a:["Motor","Mobil","Helm","Peralatan","Sepeda"]
+},
+{
+q:"Sebutkan hal yang sering dilakukan saat hujan malam",
+a:["Tidur","Nonton","Main HP","Minum hangat","Makan"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di toko komputer",
+a:["Laptop","Mouse","Keyboard","Monitor","Printer"]
+},
+{
+q:"Sebutkan alasan orang pergi ke stadion bola",
+a:["Menonton pertandingan","Mendukung tim","Hiburan","Bersama teman","Acara"]
+},
+{
+q:"Sebutkan benda yang sering dibawa ke acara sekolah",
+a:["Tas","HP","Botol minum","Buku","Pulpen"]
+},
+{
+q:"Sebutkan hal yang sering membuat orang senang saat sekolah",
+a:["Nilai bagus","Pulang cepat","Jam kosong","Ditraktir","Ketemu teman"]
+},
+{
+q:"Sebutkan sesuatu yang sering ada di warung sembako",
+a:["Beras","Gula","Minyak","Mie instan","Telur"]
+},
+{
+q:"Sebutkan alasan orang membuka YouTube",
+a:["Hiburan","Belajar","Musik","Review","Berita"]
+}
+];
+
+let score=0;
+let opened=[];
+let wrongCount=0;
+let currentQuestion;
+
+let order=[
+...questions.keys()
+].sort(()=>Math.random()-0.5);
+
+let pos=0;
+
+let timer;
+let seconds = 240;
+
+function showPopup(text,icon,callback){
+
+const popup=document.getElementById("popup");
+
+popup.innerHTML=`
+<div>${text}</div>
+<div class="big">${icon}</div>
+`;
+
+popup.style.display="flex";
+
+setTimeout(()=>{
+
+popup.style.display="none";
+
+if(callback) callback();
+
+},3000);
+
+}
+
+function updateMistakes(){
+
+let html="";
+
+for(let i=0;i<5;i++){
+
+if(i<wrongCount){
+html+="❌";
+}else{
+html+="⬜";
+}
+
+}
+
+document.getElementById("mistakes").innerHTML=html;
+
+}
+
+function formatTime(sec){
+
+let m=Math.floor(sec/60);
+let s=sec%60;
+
+return String(m).padStart(2,"0")
++":"+String(s).padStart(2,"0");
+
+}
+
+function startTimer(){
+
+clearInterval(timer);
+
+seconds = 240;
+
+document.getElementById("timer").innerText=
+"⏱️ "+formatTime(seconds);
+
+timer=setInterval(()=>{
+
+seconds--;
+
+document.getElementById("timer").innerText=
+"⏱️ "+formatTime(seconds);
+
+if(seconds<=0){
+
+clearInterval(timer);
+
+revealAll("⏰ WAKTU HABIS");
+
+}
+
+},1000);
+
+}
+
+function renderAnswers(){
+
+let html="";
+
+for(let i=0;i<5;i++){
+
+html+=`
+<div class="answer">
+${i+1}. ${
+opened.includes(i)
+? currentQuestion.a[i]
+: "?"
+}
+</div>
+`;
+
+}
+
+document.getElementById("answers").innerHTML=html;
+
+}
+
+function revealAll(title){
+
+showPopup("SURVEI MEMBUKTIKAN...","⏳",()=>{
+
+opened=[0,1,2,3,4];
+
+renderAnswers();
+
+document.getElementById("nextBtn")
+.style.display="inline-block";
+
+});
+
+}
+
+function loadQuestion(){
+
+opened=[];
+
+wrongCount=0;
+
+updateMistakes();
+
+document.getElementById("input").value="";
+
+currentQuestion=
+questions[order[pos]];
+
+document.getElementById("question")
+.innerText=currentQuestion.q;
+
+document.getElementById("nextBtn")
+.style.display="none";
+
+renderAnswers();
+
+startTimer();
+
+}
+  
+function checkAnswer(){
+
+let input=document
+.getElementById("input")
+.value
+.trim()
+.toLowerCase();
+
+document.getElementById("input").value="";
+
+if(!input) return;
+
+let found=-1;
+
+for(let i=0;i<5;i++){
+
+if(
+currentQuestion.a[i]
+.toLowerCase()===input
+){
+found=i;
+break;
+}
+
+}
+
+showPopup("SURVEI MEMBUKTIKAN...","⏳",()=>{
+
+if(found!==-1){
+
+if(opened.includes(found)){
+
+showPopup(
+"JAWABAN SUDAH DIBUKA",
+"⚠️"
+);
+
+return;
+
+}
+
+opened.push(found);
+
+score+=10;
+
+document.getElementById("score")
+.innerText=score;
+
+renderAnswers();
+
+showPopup("BENAR","✅");
+
+if(opened.length===5){
+
+clearInterval(timer);
+
+score+=50;
+
+document.getElementById("score")
+.innerText=score;
+
+showPopup(
+"SEMUA JAWABAN TERBUKA! +50",
+"🎉"
+);
+
+document.getElementById("nextBtn")
+.style.display="inline-block";
+
+}
+
+}else{
+
+wrongCount++;
+
+updateMistakes();
+
+showPopup("SALAH","❌");
+
+if(wrongCount>=5){
+
+clearInterval(timer);
+
+revealAll("5 KALI SALAH");
+
+}
+
+}
+
+});
+
+}
+
+function nextQuestion(){
+
+pos++;
+
+if(pos>=order.length){
+
+order=[
+...questions.keys()
+].sort(()=>Math.random()-0.5);
+
+pos=0;
+
+}
+
+loadQuestion();
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+loadQuestion();
+});
+
+</script>
+
+</body>
+</html>
